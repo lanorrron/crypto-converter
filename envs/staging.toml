@@ -1,0 +1,7 @@
+[deploy.parameters]
+stack_name = "my-app-staging"
+parameter_overrides = [
+    "Environment=staging",
+    "ApiStageName=staging-api"
+]
+s3_bucket = "my-app-staging-artifacts"
