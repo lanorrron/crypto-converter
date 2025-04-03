@@ -2,6 +2,8 @@
 stack_name = "my-app-staging"
 parameter_overrides = [
     "Environment=staging",
-    "ApiStageName=staging-api"
+    "ApiStageName=staging-api",
+    "CoinGeckoSecretName=coingecko_secret",
+    "CoinGeckoBaseUrl=https://api.coingecko.com/api/v3"
 ]
 s3_bucket = "my-app-staging-artifacts"

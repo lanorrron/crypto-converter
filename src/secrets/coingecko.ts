@@ -11,8 +11,9 @@ const client = new SecretsManagerClient({
     region: "us-east-2"
 })
 
-export async function getSecret(secretName: string): Promise<MySecret> {
+export async function getSecret(): Promise<MySecret> {
     if (cachedSecret) return cachedSecret;
+    const secretName = process.env.COINGECKO_SECRET_NAME;
     try {
         const response = await client.send(
             new GetSecretValueCommand({

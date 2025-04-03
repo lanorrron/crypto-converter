@@ -1,22 +1,27 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import axios from "axios";
+import { getSecret } from "../secrets/coingecko";
 
 // list top 10 coins by marketcap
 
 export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    try {
+    const baseUrl = process.env.COINGECKO_BASE_URL;
 
-        const url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10"
-        const response = await axios.get(url,{
+    try {
+        const {API_KEY} = await getSecret();
+
+        const url = `${baseUrl}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10`
+        const response:any = await axios.get(url,{
             headers:{
                 'Accept': 'application/json',
-                'x-cg-demo-api-key':'|'
+                'x-cg-demo-api-key': API_KEY
             }
         })
         return {
             statusCode: 200,
             body: JSON.stringify({
-                response,
+                data:response.data,
+                apikey:API_KEY
             }),
         };
     }

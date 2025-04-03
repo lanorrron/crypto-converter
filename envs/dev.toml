@@ -2,6 +2,8 @@
 stack_name = "my-app-dev"
 parameter_overrides = [
     "Environment=dev",
-    "ApiStageName=dev-api"
+    "ApiStageName=dev-api",
+    "CoinGeckoSecretName=coingecko_secret",
+    "CoinGeckoBaseUrl=https://api.coingecko.com/api/v3"
 ]
 s3_bucket = "my-app-dev-artifacts-dev"
