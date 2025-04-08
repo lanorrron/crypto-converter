@@ -5,13 +5,13 @@ import { SecretManager } from "../../utils/secretManager";
 // list top 10 coins by marketcap
 export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const baseUrl = process.env.COINGECKO_BASE_URL;
-    const secreName = process.env.COINGECKO_SECRET_NAME;
+    const coinGeckoSecreName = process.env.COINGECKO_SECRET_NAME;
 
     try {
-        if(!secreName) throw new Error("SecretName not found")
+        if(!coinGeckoSecreName) throw new Error("CoinGecko secretName not found")
 
-        const test = SecretManager.getInstance();
-        const secret = await test.getSecret<{api_key_coingecko:string}>(secreName)
+        const secretManager = SecretManager.getInstance();
+        const secret = await secretManager.getSecret<{api_key_coingecko:string}>(coinGeckoSecreName)
 
 
         const url = `${baseUrl}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10`
