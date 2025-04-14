@@ -23,6 +23,15 @@ Parameters:
   BinanceBaseUrl:
     Type: String
     Default: https://api.binance.com
+  BinanceApiSecret:
+    Type: String
+    Default: binance_api_secret
+  BinanceApiKey:
+    Type: String
+    Default: binance_api_key
+  BinanceSecretName:
+    Type: String
+    Default: binance_secret
 Globals:
   Function:
     Timeout: 10
@@ -74,7 +83,7 @@ Resources:
   BinanceListAllConvertPairsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/modules/binance/list-all-convert-pairs
+      CodeUri: src/modules/binance/convert/list-all-convert-pairs
       Handler: app.lambdaHandler
       Runtime: nodejs20.x
       Architectures:
@@ -114,6 +123,43 @@ Resources:
           Properties:
             Path: /list-ticker-24hr
             Method: get
+            RestApiId: !Ref MyApi
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+          - app.ts
+  BinanceSendQuoteRequestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/modules/binance/convert/send-quote-request
+      Handler: app.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          BINANCE_BASE_URL: !Ref BinanceBaseUrl
+          BINANCE_API_SECRET: !Ref BinanceApiSecret
+          BINANCE_API_KEY: !Ref BinanceApiKey
+      Policies:
+        - Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+                - secretsmanager:DescribeSecret
+                - secretsmanager:ListSecrets
+              Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${BinanceSecretName}*
+      Events:
+        CoinGeckoTopCoins:
+          Type: Api
+          Properties:
+            Path: /send-quote-request
+            Method: post
             RestApiId: !Ref MyApi
     Metadata:
       BuildMethod: esbuild
