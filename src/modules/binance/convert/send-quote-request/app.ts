@@ -1,5 +1,6 @@
 import { Convert, } from "@binance/convert";
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import { SecretManager } from "../../../../utils/secretManager";
 
 /*
  interface BinanceConvertQuoteParams {
@@ -14,14 +15,18 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 }
 */
 
-const binance = new Convert({
-    configurationRestAPI: {
-        apiKey: process.env.BINANCE_API_KEY!,
-        apiSecret: process.env.BINANCE_API_SECRET!,
-    },
-});
 
-export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult>=>{
+export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    const binanceSecretManager = SecretManager.getInstance()
+    const binanceSecret = await binanceSecretManager.getSecret<{ binance_api_key: string, binance_api_secret: string }>(process.env.BINANCE_SECRET_NAME!)
+
+    const binance = new Convert({
+        configurationRestAPI: {
+            apiKey: binanceSecret.binance_api_key,
+            apiSecret: binanceSecret.binance_api_secret,
+        },
+    });
+
     try {
         const query = event.queryStringParameters || {};
         const { fromAsset, toAsset, fromAmount } = query;
@@ -35,22 +40,22 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
         const response = await binance.restAPI.sendQuoteRequest({
             fromAsset,
             toAsset,
-            fromAmount: Number(fromAmount),
+            fromAmount: Number(fromAmount)
         });
+        const data = await response.data();
 
-        return{
+        return {
             statusCode: 200,
-            body: JSON.stringify(response.data)
+            body: JSON.stringify(data)
         };
 
     } catch (err) {
         console.log(err);
-        return{
-            statusCode:500,
+        return {
+            statusCode: 500,
             body: JSON.stringify({
                 message: "some erorr happened"
             })
         }
-    
     }
 }

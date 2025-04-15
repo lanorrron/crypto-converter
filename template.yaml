@@ -23,12 +23,6 @@ Parameters:
   BinanceBaseUrl:
     Type: String
     Default: https://api.binance.com
-  BinanceApiSecret:
-    Type: String
-    Default: binance_api_secret
-  BinanceApiKey:
-    Type: String
-    Default: binance_api_key
   BinanceSecretName:
     Type: String
     Default: binance_secret
@@ -143,8 +137,7 @@ Resources:
       Environment:
         Variables:
           BINANCE_BASE_URL: !Ref BinanceBaseUrl
-          BINANCE_API_SECRET: !Ref BinanceApiSecret
-          BINANCE_API_KEY: !Ref BinanceApiKey
+          BINANCE_SECRET_NAME: !Ref BinanceSecretName
       Policies:
         - Version: 2012-10-17
           Statement:
