@@ -1,9 +1,0 @@
-[deploy.parameters]
-stack_name = "my-app-prod"
-parameter_overrides = [
-    "Environment=prod",
-    "ApiStageName=prod-api",  
-    "CoinGeckoSecretName=coingecko_secret",
-    "CoinGeckoBaseUrl=https://api.coingecko.com/api/v3"
-]
-s3_bucket = "my-app-prod-artifacts"
