@@ -2,7 +2,7 @@ import axios from "axios";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
-export async function getAllPairsToConvert(){
+async function getAllPairsToConvert(){
     const response = await axios.get(`${BASE_URL}/list-all-covert-pairs`)
     const grouped = response.data.reduce((acc:any, item:any) => {
         const key = item.fromAsset?.trim();
@@ -18,4 +18,7 @@ export async function getAllPairsToConvert(){
       }, {});
     return grouped;
 
+}
+export default{
+  getAllPairsToConvert
 }

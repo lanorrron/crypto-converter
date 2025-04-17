@@ -19,9 +19,9 @@ export default function Home() {
           <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400">
             Sam Crypto
           </h1>
-          <p className="text-xl text-cyan-200 mb-8">Tu portal confiable para el trading de criptomonedas</p>
+          <p className="text-xl text-cyan-200 mb-8">Tu portal informativo de criptomonedas</p>
         </header>
-        <section>
+        <section className="container mx-auto px-4 py-8">
           <PreviewConverter></PreviewConverter>
         </section>
         <footer className="container mx-auto px-4 py-8 text-center text-cyan-300">
