@@ -6,7 +6,7 @@
   --border: oklch(74.13% 0.149 211.77 / 0.2);
   --card-container: #161F34;
   --card-foreground: #ededed;
-  --ring: oklch(79.6% 0.658 190.05);
+  --ring: oklch(0.78 0.176 200.85);
 }
 
 @theme {
@@ -21,6 +21,9 @@
 @layer utilities {
   .shadow-cyan-soft {
     box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
+  }
+  .title-1 {
+    @apply text-3xl font-bold text-cyan-100;
   }
 }
 

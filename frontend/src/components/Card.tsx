@@ -6,7 +6,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const Card: FC<Props> = ({ children, className = '', ...rest }) => {
-    const classes = `bg-slate-900/50 backdrop-blur-xl rounded-2xl p-4 border border-border hover:border-ring transition-colors ${className}`.trim();
+    const classes = `bg-slate-900/50 backdrop-blur-xl rounded-xl p-4 border border-border hover:border-cyan-400 transition-colors ${className}`.trim();
 
 
     return (
