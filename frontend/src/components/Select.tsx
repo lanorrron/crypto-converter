@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-type Option = {
+export type Option = {
   label: string;
   value: string;
 };
@@ -10,15 +10,23 @@ type Option = {
 type SearchableSelectProps = React.InputHTMLAttributes<HTMLInputElement> & {
   options: Option[];
   onOptionSelect: (value: Option) => void;
+  value?: string;
+  className?: string;
 };
 
 const Select: React.FC<SearchableSelectProps> = ({
   options,
   onOptionSelect,
+  value = '',
+  className,
   ...rest
 }) => {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(value);
   const [showDropdown, setShowDropdown] = useState(false);
+
+  useEffect(() => {
+    setSearch(value);
+  }, [value]);
 
   const filteredOptions = options.filter((opt) =>
     opt.label.toLowerCase().includes(search.toLowerCase())
@@ -41,7 +49,7 @@ const Select: React.FC<SearchableSelectProps> = ({
         }}
         onFocus={() => setShowDropdown(true)}
         onBlur={() => setTimeout(() => setShowDropdown(false), 100)}
-        className={`w-full px-4 py-2 border border-border rounded-xl focus:outline-none focus:ring-1 focus:ring-ring text-sm bg-slate-900/50 ${rest.className || ''}`}
+        className={`w-full px-4 py-2 border border-border rounded-xl focus:outline-none focus:ring-1 focus:ring-ring text-sm bg-slate-900/50 ${className || ''}`}
         {...rest}
       />
 
