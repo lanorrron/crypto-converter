@@ -40,18 +40,28 @@ const Select: React.FC<SearchableSelectProps> = ({
 
   return (
     <div className="relative">
-      <input
-        type="text"
-        value={search}
-        onChange={(e) => {
-          setSearch(e.target.value);
-          setShowDropdown(true);
-        }}
-        onFocus={() => setShowDropdown(true)}
-        onBlur={() => setTimeout(() => setShowDropdown(false), 100)}
-        className={`w-full px-4 py-2 border border-border rounded-xl focus:outline-none focus:ring-1 focus:ring-ring text-sm bg-slate-900/50 ${className || ''}`}
-        {...rest}
-      />
+      <div className="relative w-full">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setShowDropdown(true);
+          }}
+          onFocus={() => setShowDropdown(true)}
+          onBlur={() => setTimeout(() => setShowDropdown(false), 100)}
+          className={`w-full px-4 py-2 border border-border rounded-xl focus:outline-none focus:ring-1 focus:ring-ring text-sm bg-slate-900/50 pr-10 ${className || ''}`}
+          {...rest}
+        />
+        <span
+          onClick={() => setShowDropdown(!showDropdown)}
+          className={`absolute cursor-pointer right-3 top-1/2 transform -translate-y-1/2 text-xl text-white transition-transform duration-200 ${
+            showDropdown ? 'rotate-180' : 'rotate-0'
+          }`}
+        >
+          ▾
+        </span>
+      </div>
 
       {showDropdown && filteredOptions.length > 0 && (
         <ul className="absolute z-10 w-full mt-1 bg-slate-900 border border-border rounded-xl shadow-xl max-h-48 overflow-auto">
