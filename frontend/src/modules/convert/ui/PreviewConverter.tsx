@@ -9,6 +9,7 @@ import {
 import Select, { Option } from '@/components/Select';
 import Input from '@/components/Input';
 import { ArrowRightLeft } from 'lucide-react';
+import Button from '@/components/Button';
 
 export const PreviewConverter = () => {
   const [listCoins, setListCoins] = useState<ListAllConvertPairs | null>(null);
@@ -77,11 +78,13 @@ export const PreviewConverter = () => {
     }
   }
 
+  console.log(quote);
+
   return (
     <CardContainer className="container mx-auto">
       <h2 className="title-1 mb-8 text-center">Cotizador de Criptomonedas</h2>
       <div className="max-w-2xl mx-auto">
-        <div className="flex flex-col md:flex-row items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center gap-4">
           <div className="flex-1 w-full">
             <Input
               type="number"
@@ -112,7 +115,10 @@ export const PreviewConverter = () => {
             />
           </div>
         </div>
-        <h2 className="title-2 text-center m-4">resultado</h2>
+        <div className="flex flex-col items-center justify-center mt-4">
+          <Button onClick={() => sendQuoteRequest()}> Cotizar</Button>
+          <h2 className="title-2  m-4">{quote?.toAmount}</h2>
+        </div>
       </div>
     </CardContainer>
   );

@@ -8,6 +8,20 @@ export type CoinPairs = {
   toAssetMinAmount: number;
 };
 
+export type ListAllConvertPairs = {
+  [key: number]: CoinPairs[];
+};
+
+export type SendQuoteRequest = {
+  fromAsset: string;
+  toAsset: string;
+  fromAmount: number;
+};
 export type SendQuoteResponse = {
-  [key: number]: CoinPairs[]; // Las claves son numéricas y los valores son arrays de CoinPairs
+  quoteId: string;
+  ratio: string;
+  inverseRatio: string;
+  validTimestamp: number;
+  toAmount: string;
+  fromAmount: string;
 };
