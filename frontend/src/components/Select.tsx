@@ -54,7 +54,11 @@ const Select: React.FC<SearchableSelectProps> = ({
           {...rest}
         />
         <span
-          onClick={() => setShowDropdown(!showDropdown)}
+          onClick={() => {
+            if (!rest.disabled) {
+              setShowDropdown((prev) => !prev);
+            }
+          }}
           className={`absolute cursor-pointer right-3 top-1/2 transform -translate-y-1/2 text-xl text-white transition-transform duration-200 ${
             showDropdown ? 'rotate-180' : 'rotate-0'
           }`}
