@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { SendQuoteRequest } from '../types/converter.type';
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import { BASE_URL } from '@/shared/constants/base-url';
 
 async function getAllPairsToConvert() {
   const response = await axios.get(`${BASE_URL}/list-all-covert-pairs`);
