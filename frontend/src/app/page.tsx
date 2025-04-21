@@ -1,9 +1,7 @@
-import { PreviewConverter } from "@/modules/convert/ui/PreviewConverter";
-import { Coins } from "lucide-react";
-
+import { PreviewConverter } from '@/modules/convert/ui/PreviewConverter';
+import { Coins } from 'lucide-react';
 
 export default function Home() {
-
   return (
     <div className="min-h-screen bg-card">
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-10 pointer-events-none"></div>
@@ -19,7 +17,9 @@ export default function Home() {
           <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400">
             Sam Crypto
           </h1>
-          <p className="text-xl text-cyan-200 mb-8">Tu portal informativo de criptomonedas</p>
+          <p className="text-xl text-cyan-200 mb-8">
+            Tu espacio para cotizar y seguir el pulso del mercado cripto.
+          </p>
         </header>
         <section className="container mx-auto px-4 py-8">
           <PreviewConverter></PreviewConverter>

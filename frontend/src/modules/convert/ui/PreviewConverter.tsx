@@ -10,6 +10,8 @@ import Select, { Option } from '@/components/Select';
 import Input from '@/components/Input';
 import { ArrowRightLeft } from 'lucide-react';
 import Button from '@/components/Button';
+import toast from 'react-hot-toast';
+import SkeletonConverter from './SkeletonConverter';
 
 export const PreviewConverter = () => {
   const [listCoins, setListCoins] = useState<ListAllConvertPairs | null>(null);
@@ -28,7 +30,7 @@ export const PreviewConverter = () => {
     setListCoins(response);
   }
   if (!listCoins) {
-    return 'List coins is null';
+    return <SkeletonConverter />;
   }
 
   const uniqueFromAssets = [
@@ -51,7 +53,11 @@ export const PreviewConverter = () => {
     setSelectedFromAsset(value);
     setSelectedToAsset('');
     if (!listCoins) {
-      return 'List coins is null';
+      toast.error('List coins is null', {
+        duration: 3000,
+        position: 'top-center',
+      });
+      return;
     }
 
     const filtered = Object.values(listCoins)
@@ -73,12 +79,14 @@ export const PreviewConverter = () => {
         fromAmount: amount,
       });
       setQuote(response);
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
+      const message = err?.response?.data?.message ?? 'Error inesperado';
+      toast.error(message, {
+        duration: 3000,
+        position: 'top-center',
+      });
     }
   }
-
-  console.log(quote);
 
   return (
     <CardContainer className="container mx-auto">
@@ -89,14 +97,14 @@ export const PreviewConverter = () => {
             <Input
               type="number"
               onChange={(e) => setAmount(Number(e.target.value))}
-              placeholder="Amount"
+              placeholder="Monto"
             />
           </div>
           <div className="flex-1 w-full ">
             <Select
               key={1}
               options={fromAssetsListCoins}
-              placeholder="From asset"
+              placeholder="De"
               onOptionSelect={(option) =>
                 handleChangeFromAssetSelect(option.value)
               }
@@ -110,7 +118,7 @@ export const PreviewConverter = () => {
               disabled={!selectedFromAsset}
               options={toAssetListCoins}
               value={selectedToAsset}
-              placeholder="To asset"
+              placeholder="A"
               onOptionSelect={(option) => setSelectedToAsset(option.value)}
             />
           </div>
