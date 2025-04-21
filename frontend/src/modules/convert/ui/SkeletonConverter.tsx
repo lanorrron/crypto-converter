@@ -20,7 +20,6 @@ const SkeletonConverter = () => {
           </div>
           <div className="flex flex-col items-center justify-center mt-4 gap-4">
             <SkeletonBox className="h-10 w-40" />
-            <SkeletonBox className="h-6 w-24" />
           </div>
         </div>
       </div>
