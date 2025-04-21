@@ -1,26 +1,24 @@
-import { APIGatewayProxyResult } from "aws-lambda";
-import { json } from "stream/consumers";
+import { APIGatewayProxyResult } from 'aws-lambda';
+import { json } from 'stream/consumers';
 
 type Header = {
     [header: string]: boolean | number | string;
 };
 const defaultHeaders: Header = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Credentials": "true",
-    "Access-Control-Allow-Methods": "OPTIONS,GET,HEAD,PUT,PATCH,POST,DELETE",
-}
-
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Allow-Methods': 'OPTIONS,GET,HEAD,PUT,PATCH,POST,DELETE',
+};
 
 export class HttpResponse {
-
     static Success<T = any>(body: T, statusCode?: number, headers?: Header): APIGatewayProxyResult {
         return {
             statusCode: statusCode ?? 200,
             headers: {
                 ...headers,
-                ...defaultHeaders
+                ...defaultHeaders,
             },
-            body: typeof body === "string" ? body : JSON.stringify(body),
+            body: typeof body === 'string' ? body : JSON.stringify(body),
         };
     }
 
@@ -29,11 +27,11 @@ export class HttpResponse {
             statusCode: statusCode ?? 404,
             headers: {
                 ...headers,
-                ...defaultHeaders
+                ...defaultHeaders,
             },
             body: JSON.stringify({
                 success: false,
-                message: message
+                message: message,
             }),
         };
     }
@@ -62,22 +60,20 @@ export class HttpResponse {
                 success: false,
                 message: message,
             }),
-        }
+        };
     }
 
-    static InternalError(message: string, statusCode?: number, headers?: Header): APIGatewayProxyResult {
+    static InternalError(message?: string, statusCode?: number, headers?: Header): APIGatewayProxyResult {
         return {
             statusCode: statusCode ?? 500,
             headers: {
                 ...headers,
-                ...defaultHeaders
+                ...defaultHeaders,
             },
             body: JSON.stringify({
                 success: false,
-                message: message
+                message: message ?? 'internal server error',
             }),
         };
     }
-
-
 }
