@@ -1,3 +1,5 @@
+import { TopGainersCoins } from '@/modules/analytics/ui/TopGainersCoins';
+import { TopPupularCoins } from '@/modules/analytics/ui/TopPopularCoins';
 import { PreviewConverter } from '@/modules/convert/ui/PreviewConverter';
 import { Coins } from 'lucide-react';
 
@@ -23,6 +25,13 @@ export default function Home() {
         </header>
         <section className="container mx-auto px-4 py-8">
           <PreviewConverter></PreviewConverter>
+        </section>
+        <section className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <TopPupularCoins />
+            <TopGainersCoins />
+            <TopPupularCoins />
+          </div>
         </section>
         <footer className="container mx-auto px-4 py-8 text-center text-cyan-300">
           <p>&copy; 2024 Sam Crypto. Todos los derechos reservados.</p>

@@ -1,4 +1,4 @@
-export type CryptoData = {
+export type PopularCoins = {
   id: string;
   symbol: string;
   name: string;
@@ -25,4 +25,14 @@ export type CryptoData = {
   atl_date: string;
   roi: null;
   last_updated: string;
+};
+
+export type TopCoinsGainersAndLosers = {
+  id: string;
+  name: string;
+  symbol: string;
+  price_change_24h: number;
+  logo: string;
+  price: number;
+  url: string;
 };
