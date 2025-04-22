@@ -5,7 +5,9 @@ parameter_overrides = [
     "ApiStageName=dev-api",
     "CoinGeckoSecretName=coingecko_secret",
     "CoinGeckoBaseUrl=https://api.coingecko.com/api/v3",
-    "BinanceBaseUrl=https://api.binance.com"
-    "BinanceSecretName=binance_secret"
+    "BinanceBaseUrl=https://api.binance.com",
+    "BinanceSecretName=binance_secret",
+    "TokeninsightSecretName=tokeninsight_secret,
+    "TokeninsightBaseUrl=https://api.tokeninsight.com"
 ]
 s3_bucket = "my-app-dev-artifacts-dev"

@@ -7,9 +7,9 @@ Parameters:
   Environment:
     Type: String
     AllowedValues:
-      - dev
-      - staging
-      - prod
+    - dev
+    - staging
+    - prod
     Default: dev
   ApiStageName:
     Type: String
@@ -26,6 +26,12 @@ Parameters:
   BinanceSecretName:
     Type: String
     Default: binance_secret
+  TokeninsightBaseUrl:
+    Type: String
+    Default: https://api.tokeninsight.com
+  TokeninsightSecretName:
+    Type: String
+    Default: tokeninsight_secret
 Globals:
   Function:
     Timeout: 10
@@ -36,7 +42,7 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: !Ref ApiStageName
- 
+
   CoinGeckoTopCoinsFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -44,25 +50,25 @@ Resources:
       Handler: app.lambdaHandler
       Runtime: nodejs20.x
       Architectures:
-        - x86_64
+      - x86_64
       Environment:
         Variables:
           COINGECKO_BASE_URL: !Ref CoinGeckoBaseUrl
           COINGECKO_SECRET_NAME: !Ref CoinGeckoSecretName
       Policies:
-        - Version: 2012-10-17
-          Statement:
-            - Effect: Allow
-              Action:
-                - secretsmanager:GetSecretValue
-                - secretsmanager:DescribeSecret
-                - secretsmanager:ListSecrets
-              Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${CoinGeckoSecretName}*
+      - Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Action:
+          - secretsmanager:GetSecretValue
+          - secretsmanager:DescribeSecret
+          - secretsmanager:ListSecrets
+          Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${CoinGeckoSecretName}*
       Events:
         CoinGeckoTopCoins:
           Type: Api
           Properties:
-            Path: /top-coins
+            Path: /popular
             Method: get
             RestApiId: !Ref MyApi
     Metadata:
@@ -72,7 +78,7 @@ Resources:
         Target: es2020
         Sourcemap: true
         EntryPoints:
-          - app.ts
+        - app.ts
 
   BinanceListAllConvertPairsFunction:
     Type: AWS::Serverless::Function
@@ -81,7 +87,7 @@ Resources:
       Handler: app.lambdaHandler
       Runtime: nodejs20.x
       Architectures:
-        - x86_64
+      - x86_64
       Environment:
         Variables:
           BINANCE_BASE_URL: !Ref BinanceBaseUrl
@@ -99,7 +105,7 @@ Resources:
         Target: es2020
         Sourcemap: true
         EntryPoints:
-          - app.ts
+        - app.ts
   BinanceListTicker24hrFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -107,7 +113,7 @@ Resources:
       Handler: app.lambdaHandler
       Runtime: nodejs20.x
       Architectures:
-        - x86_64
+      - x86_64
       Environment:
         Variables:
           BINANCE_BASE_URL: !Ref BinanceBaseUrl
@@ -125,7 +131,7 @@ Resources:
         Target: es2020
         Sourcemap: true
         EntryPoints:
-          - app.ts
+        - app.ts
   BinanceSendQuoteRequestFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -133,20 +139,20 @@ Resources:
       Handler: app.lambdaHandler
       Runtime: nodejs20.x
       Architectures:
-        - x86_64
+      - x86_64
       Environment:
         Variables:
           BINANCE_BASE_URL: !Ref BinanceBaseUrl
           BINANCE_SECRET_NAME: !Ref BinanceSecretName
       Policies:
-        - Version: 2012-10-17
-          Statement:
-            - Effect: Allow
-              Action:
-                - secretsmanager:GetSecretValue
-                - secretsmanager:DescribeSecret
-                - secretsmanager:ListSecrets
-              Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${BinanceSecretName}*
+      - Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Action:
+          - secretsmanager:GetSecretValue
+          - secretsmanager:DescribeSecret
+          - secretsmanager:ListSecrets
+          Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${BinanceSecretName}*
       Events:
         CoinGeckoTopCoins:
           Type: Api
@@ -161,7 +167,80 @@ Resources:
         Target: es2020
         Sourcemap: true
         EntryPoints:
-          - app.ts
+        - app.ts
+
+  TokeninsightTopGainersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/modules/tokeninsight/top-gainers
+      Handler: app.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+      - x86_64
+      Environment:
+        Variables:
+          TOKENINSIGHT_BASE_URL: !Ref TokeninsightBaseUrl
+          TOKENINSIGHT_SECRET_NAME: !Ref TokeninsightSecretName
+      Policies:
+      - Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Action:
+          - secretsmanager:GetSecretValue
+          - secretsmanager:DescribeSecret
+          - secretsmanager:ListSecrets
+          Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${TokeninsightSecretName}*
+      Events:
+        CoinGeckoTopCoins:
+          Type: Api
+          Properties:
+            Path: /top-coins
+            Method: get
+            RestApiId: !Ref MyApi
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+        - app.ts
+  TokeninsightTopLosersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/modules/tokeninsight/top-losers
+      Handler: app.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+      - x86_64
+      Environment:
+        Variables:
+          TOKENINSIGHT_BASE_URL: !Ref TokeninsightBaseUrl
+          TOKENINSIGHT_SECRET_NAME: !Ref TokeninsightSecretName
+      Policies:
+      - Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Action:
+          - secretsmanager:GetSecretValue
+          - secretsmanager:DescribeSecret
+          - secretsmanager:ListSecrets
+          Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${TokeninsightSecretName}*
+      Events:
+        CoinGeckoTopCoins:
+          Type: Api
+          Properties:
+            Path: /top-losers
+            Method: get
+            RestApiId: !Ref MyApi
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+        - app.ts
 Outputs:
   CoinGeckoTopCoinsFunctionApi:
     Description: API Gateway endpoint URL for ${ApiStageName} stage for crypto function
