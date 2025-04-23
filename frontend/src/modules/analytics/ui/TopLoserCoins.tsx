@@ -3,27 +3,27 @@ import { useEffect, useState } from 'react';
 import { TopCoinsGainersAndLosers } from '../types/analytics.types';
 import CardContainer from '@/components/CardContainer';
 import serviceAnalytics from '@/modules/analytics/service/analytics.service';
-import { ChartNoAxesCombined } from 'lucide-react';
+import { ChartColumnDecreasing } from 'lucide-react';
 import { Column, GenericTable } from '@/components/Table';
 import { SkeletonCardCoins } from './SkeletonCoins';
 
-export const TopGainersCoins = () => {
-  const [listGainerCoins, setListGainerCoins] = useState<TopCoinsGainersAndLosers[] | []>([]);
+export const TopLoserCoins = () => {
+  const [listLoserCoins, setListLoserCoins] = useState<TopCoinsGainersAndLosers[] | []>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    getListGainerCoins();
+    getListLoserCoins();
   }, []);
 
-  async function getListGainerCoins() {
+  async function getListLoserCoins() {
     setLoading(true);
     serviceAnalytics
-      .getListTopCoinsTokeninsight()
+      .getListTopLosersCoins()
       .then((response) => {
-        setListGainerCoins(response);
+        setListLoserCoins(response);
       })
       .catch(() => {
-        console.log('Error getting gainer coins');
+        console.log('Error getting loser coins');
       })
       .finally(() => {
         setLoading(false);
@@ -57,7 +57,7 @@ export const TopGainersCoins = () => {
         const percentage = row.price_change_24h * 100;
         return (
           <div className="flex gap-0.5">
-            <span className={`whitespace-nowrap ${isPositive ? 'text-cyan-300' : 'text-red-500'}`}>
+            <span className={`whitespace-nowrap ${isPositive ? 'text-cyan-300' : 'text-red-400'}`}>
               {isPositive ? `+ ${percentage.toFixed(3)} %` : `- ${Math.abs(percentage).toFixed(3)} % `}
             </span>
           </div>
@@ -69,10 +69,10 @@ export const TopGainersCoins = () => {
   return (
     <CardContainer>
       <div className="flex items-center gap-2 mb-4">
-        <ChartNoAxesCombined className=" w-10 h-10 text-green-400 " />
-        <h2 className="title-2">Ganadores</h2>
+        <ChartColumnDecreasing className=" w-10 h-10 text-red-500" />
+        <h2 className="title-2">Perdedores</h2>
       </div>
-      {loading ? <SkeletonCardCoins /> : <GenericTable data={listGainerCoins} columns={columns} />}
+      {loading ? <SkeletonCardCoins /> : <GenericTable data={listLoserCoins} columns={columns} />}
     </CardContainer>
   );
 };
