@@ -2,10 +2,7 @@
 import CardContainer from '@/components/CardContainer';
 import { useEffect, useState } from 'react';
 import serviceConverter from '../service/convert.service';
-import {
-  ListAllConvertPairs,
-  SendQuoteResponse,
-} from '../types/converter.type';
+import { ListAllConvertPairs, SendQuoteResponse } from '../types/converter.type';
 import Select, { Option } from '@/components/Select';
 import Input from '@/components/Input';
 import { ArrowRightLeft } from 'lucide-react';
@@ -106,22 +103,16 @@ export const PreviewConverter = () => {
   }, [selectedFromAsset, selectedToAsset, amount]);
 
   return (
-    <CardContainer className="container mx-auto">
+    <div>
       {!listCoins ? (
         <SkeletonConverter />
       ) : (
-        <>
-          <h2 className="title-1 mb-8 text-center">
-            Cotizador de Criptomonedas
-          </h2>
+        <CardContainer className="container mx-auto">
+          <h2 className="title-1 mb-8 text-center">Cotizador de Criptomonedas</h2>
           <div className="max-w-2xl mx-auto">
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <div className="flex-1 w-full">
-                <Input
-                  type="number"
-                  onChange={(e) => setAmount(Number(e.target.value))}
-                  placeholder="Monto"
-                />
+                <Input type="number" onChange={(e) => setAmount(Number(e.target.value))} placeholder="Monto" />
               </div>
               <div className="flex-1 w-full ">
                 <Select
@@ -129,16 +120,11 @@ export const PreviewConverter = () => {
                   value={selectedFromAsset}
                   options={fromAssetsListCoins}
                   placeholder="De"
-                  onOptionSelect={(option) =>
-                    handleChangeFromAssetSelect(option.value)
-                  }
+                  onOptionSelect={(option) => handleChangeFromAssetSelect(option.value)}
                 />
               </div>
               <div>
-                <ArrowRightLeft
-                  onClick={handleChangeInverterCoins}
-                  className="text-cyan-300 cursor-pointer"
-                />
+                <ArrowRightLeft onClick={handleChangeInverterCoins} className="text-cyan-300 cursor-pointer" />
               </div>
               <div className="flex-1 w-full ">
                 <Select
@@ -151,13 +137,11 @@ export const PreviewConverter = () => {
               </div>
             </div>
             <div className="flex flex-col items-center justify-center mt-4">
-              <h2 className="title-2 m-4">
-                {loadingSendQuote ? 'Cargando...' : resultToAmount}
-              </h2>
+              <h2 className="title-2 m-4">{loadingSendQuote ? 'Cargando...' : resultToAmount}</h2>
             </div>
           </div>
-        </>
+        </CardContainer>
       )}
-    </CardContainer>
+    </div>
   );
 };
