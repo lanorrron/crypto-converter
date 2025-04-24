@@ -260,6 +260,12 @@ Resources:
         Variables:
           BINANCE_BASE_URL: !Ref BinanceBaseUrl
           BINANCE_SECRET_NAME: !Ref BinanceSecretName
+      VpcConfig:
+        SecurityGroupIds:
+        - !Ref SamCryptoSecurityGroup
+        SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
       Policies:
       - Version: 2012-10-17
         Statement:
