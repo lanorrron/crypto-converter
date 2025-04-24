@@ -6,11 +6,7 @@ export class SecretManager {
     private client: SecretsManagerClient;
 
     private constructor() {
-        const region = process.env.AWS_REGION;
-        if (!region) {
-            throw new Error('AWS_REGION is not defined in environment variables.');
-        }
-
+        const region = process.env.AWS_REGION || 'ap-south-1';
         this.client = new SecretsManagerClient({ region });
     }
 

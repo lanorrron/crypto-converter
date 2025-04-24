@@ -28,15 +28,10 @@ Parameters:
   TokeninsightSecretName:
     Type: String
     Default: tokeninsight_secret
-  Region:
-    Type: String
-    Default: ap-south-1
 
 Globals:
   Function:
     Environment:
-      Variables:
-        AWS_REGION: !Ref Region
     Timeout: 10
     LoggingConfig:
       LogFormat: JSON
