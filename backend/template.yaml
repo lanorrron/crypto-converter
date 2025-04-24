@@ -1,15 +1,11 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
-Description: |
-  sam-crypto
-  Sample SAM Template for sam-crypto
+Description: SAM template with VPC
+
 Parameters:
   Environment:
     Type: String
-    AllowedValues:
-    - dev
-    - staging
-    - prod
+    AllowedValues: [ dev, staging, prod ]
     Default: dev
   ApiStageName:
     Type: String
@@ -32,84 +28,142 @@ Parameters:
   TokeninsightSecretName:
     Type: String
     Default: tokeninsight_secret
+  Region:
+    Type: String
+    Default: ap-south-1
+
 Globals:
   Function:
+    Environment:
+      Variables:
+        AWS_REGION: !Ref Region
     Timeout: 10
     LoggingConfig:
       LogFormat: JSON
+
 Resources:
+
+  # VPC and Networking
+  SamCryptoVpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref SamCryptoVpc
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SamCryptoVpc
+      CidrBlock: 10.0.0.0/24
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      MapPublicIpOnLaunch: true
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SamCryptoVpc
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      MapPublicIpOnLaunch: true
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SamCryptoVpc
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SamCryptoVpc
+      CidrBlock: 10.0.3.0/24
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+
+  NatEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  NatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NatEIP.AllocationId
+      SubnetId: !Ref PublicSubnet1
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref SamCryptoVpc
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref PublicRouteTable
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref SamCryptoVpc
+
+  PrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
+
+  PrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet1
+      RouteTableId: !Ref PrivateRouteTable
+
+  PrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet2
+      RouteTableId: !Ref PrivateRouteTable
+  SamCryptoSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Lambda functions in the VPC
+      VpcId: !Ref SamCryptoVpc # Asegúrate de que esté en la misma VPC que las subnets
+
+  # API Gateway
   MyApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: !Ref ApiStageName
 
-  CoinGeckoTopCoinsFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src/modules/coingecko
-      Handler: app.lambdaHandler
-      Runtime: nodejs20.x
-      Architectures:
-      - x86_64
-      Environment:
-        Variables:
-          COINGECKO_BASE_URL: !Ref CoinGeckoBaseUrl
-          COINGECKO_SECRET_NAME: !Ref CoinGeckoSecretName
-      Policies:
-      - Version: 2012-10-17
-        Statement:
-        - Effect: Allow
-          Action:
-          - secretsmanager:GetSecretValue
-          - secretsmanager:DescribeSecret
-          - secretsmanager:ListSecrets
-          Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${CoinGeckoSecretName}*
-      Events:
-        CoinGeckoTopCoins:
-          Type: Api
-          Properties:
-            Path: /popular
-            Method: get
-            RestApiId: !Ref MyApi
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: es2020
-        Sourcemap: true
-        EntryPoints:
-        - app.ts
-
-  BinanceListAllConvertPairsFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src/modules/binance/convert/list-all-convert-pairs
-      Handler: app.lambdaHandler
-      Runtime: nodejs20.x
-      Architectures:
-      - x86_64
-      Environment:
-        Variables:
-          BINANCE_BASE_URL: !Ref BinanceBaseUrl
-      Events:
-        CoinGeckoTopCoins:
-          Type: Api
-          Properties:
-            Path: /list-all-covert-pairs
-            Method: get
-            RestApiId: !Ref MyApi
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: es2020
-        Sourcemap: true
-        EntryPoints:
-        - app.ts
   BinanceListTicker24hrFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/modules/binance/list-ticker-24hr
+      CodeUri: ./src/
       Handler: app.lambdaHandler
       Runtime: nodejs20.x
       Architectures:
@@ -117,8 +171,14 @@ Resources:
       Environment:
         Variables:
           BINANCE_BASE_URL: !Ref BinanceBaseUrl
+      VpcConfig:
+        SecurityGroupIds:
+        - !Ref SamCryptoSecurityGroup
+        SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
       Events:
-        CoinGeckoTopCoins:
+        BinanceListTicker:
           Type: Api
           Properties:
             Path: /list-ticker-24hr
@@ -131,11 +191,72 @@ Resources:
         Target: es2020
         Sourcemap: true
         EntryPoints:
-        - app.ts
+        - modules/binance/list-ticker-24hr/app.ts
+
+  CoinGeckoPopularCoinsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/
+      Handler: app.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+      - x86_64
+      Environment:
+        Variables:
+          COINGECKO_BASE_URL: !Ref CoinGeckoBaseUrl
+          COINGECKO_SECRET_NAME: !Ref CoinGeckoSecretName
+      Policies:
+      - Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Action: secretsmanager:GetSecretValue
+          Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${CoinGeckoSecretName}-*
+      Events:
+        CoinGeckoPopularCoins:
+          Type: Api
+          Properties:
+            Path: /popular
+            Method: get
+            RestApiId: !Ref MyApi
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+        - modules/coingecko/app.ts
+
+  BinanceListAllConvertPairsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/
+      Handler: app.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+      - x86_64
+      Environment:
+        Variables:
+          BINANCE_BASE_URL: !Ref BinanceBaseUrl
+      Events:
+        BinanceListConvertPairs:
+          Type: Api
+          Properties:
+            Path: /list-all-covert-pairs
+            Method: get
+            RestApiId: !Ref MyApi
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+        - modules/binance/convert/list-all-convert-pairs/app.ts
   BinanceSendQuoteRequestFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/modules/binance/convert/send-quote-request
+      CodeUri: ./src/
       Handler: app.lambdaHandler
       Runtime: nodejs20.x
       Architectures:
@@ -150,11 +271,9 @@ Resources:
         - Effect: Allow
           Action:
           - secretsmanager:GetSecretValue
-          - secretsmanager:DescribeSecret
-          - secretsmanager:ListSecrets
-          Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${BinanceSecretName}*
+          Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${BinanceSecretName}-*
       Events:
-        CoinGeckoTopCoins:
+        BinanceSendQuoteRequest:
           Type: Api
           Properties:
             Path: /send-quote-request
@@ -167,12 +286,12 @@ Resources:
         Target: es2020
         Sourcemap: true
         EntryPoints:
-        - app.ts
+        - modules/binance/convert/send-quote-request/app.ts
 
   TokeninsightTopGainersFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/modules/tokeninsight/top-gainers
+      CodeUri: ./src/
       Handler: app.lambdaHandler
       Runtime: nodejs20.x
       Architectures:
@@ -182,16 +301,12 @@ Resources:
           TOKENINSIGHT_BASE_URL: !Ref TokeninsightBaseUrl
           TOKENINSIGHT_SECRET_NAME: !Ref TokeninsightSecretName
       Policies:
-      - Version: 2012-10-17
-        Statement:
+      - Statement:
         - Effect: Allow
-          Action:
-          - secretsmanager:GetSecretValue
-          - secretsmanager:DescribeSecret
-          - secretsmanager:ListSecrets
-          Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${TokeninsightSecretName}*
+          Action: secretsmanager:GetSecretValue
+          Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${TokeninsightSecretName}-*
       Events:
-        CoinGeckoTopCoins:
+        TokeninsightTopGainers:
           Type: Api
           Properties:
             Path: /top-coins
@@ -204,11 +319,12 @@ Resources:
         Target: es2020
         Sourcemap: true
         EntryPoints:
-        - app.ts
+        - modules/tokeninsight/top-gainers/app.ts
+
   TokeninsightTopLosersFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/modules/tokeninsight/top-losers
+      CodeUri: ./src/
       Handler: app.lambdaHandler
       Runtime: nodejs20.x
       Architectures:
@@ -223,11 +339,9 @@ Resources:
         - Effect: Allow
           Action:
           - secretsmanager:GetSecretValue
-          - secretsmanager:DescribeSecret
-          - secretsmanager:ListSecrets
-          Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${TokeninsightSecretName}*
+          Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${TokeninsightSecretName}-*
       Events:
-        CoinGeckoTopCoins:
+        TokeninsightTopLosers:
           Type: Api
           Properties:
             Path: /top-losers
@@ -240,14 +354,12 @@ Resources:
         Target: es2020
         Sourcemap: true
         EntryPoints:
-        - app.ts
+        - modules/tokeninsight/top-losers/app.ts
+
 Outputs:
-  CoinGeckoTopCoinsFunctionApi:
-    Description: API Gateway endpoint URL for ${ApiStageName} stage for crypto function
-    Value: !Sub https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiStageName}/top-coins/
-  CoinGeckoTopCoinsFunction:
-    Description: crypto Lambda Function ARN
-    Value: !GetAtt CoinGeckoTopCoinsFunction.Arn
-  CoinGeckoTopCoinsFunctionIamRole:
-    Description: Implicit IAM Role created for Hello World function
-    Value: !GetAtt CoinGeckoTopCoinsFunctionRole.Arn
+  VPCId:
+    Value: !Ref SamCryptoVpc
+  PrivateSubnets:
+    Value: !Join [ ",", [ !Ref PrivateSubnet1, !Ref PrivateSubnet2 ] ]
+  PublicSubnets:
+    Value: !Join [ ",", [ !Ref PublicSubnet1, !Ref PublicSubnet2 ] ]

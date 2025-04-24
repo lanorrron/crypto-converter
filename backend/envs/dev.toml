@@ -1,5 +1,5 @@
 [deploy.parameters]
-stack_name = "my-app-dev"
+stack_name = "sam-crypto-dev"
 parameter_overrides = [
     "Environment=dev",
     "ApiStageName=dev-api",

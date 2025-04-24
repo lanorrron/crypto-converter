@@ -1,14 +1,21 @@
-import { GetSecretValueCommand, SecretsManagerClient } from "@aws-sdk/client-secrets-manager";
+import { GetSecretValueCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
 
 export class SecretManager {
     private static instance: SecretManager;
     private cache: Record<string, unknown> = {};
-    private client: SecretsManagerClient = new SecretsManagerClient({ region: "us-east-2" });
+    private client: SecretsManagerClient;
 
-    private constructor() { };
+    private constructor() {
+        const region = process.env.AWS_REGION;
+        if (!region) {
+            throw new Error('AWS_REGION is not defined in environment variables.');
+        }
+
+        this.client = new SecretsManagerClient({ region });
+    }
 
     static getInstance(): SecretManager {
-      return (this.instance??= new SecretManager())
+        return (this.instance ??= new SecretManager());
     }
 
     async getSecret<T = unknown>(secretName: string): Promise<T> {
@@ -16,17 +23,14 @@ export class SecretManager {
 
         try {
             const response = await this.client.send(new GetSecretValueCommand({ SecretId: secretName }));
-            if (!response.SecretString)
-                throw new Error(`No secretString found for ${secretName}`);
+            if (!response.SecretString) throw new Error(`No secretString found for ${secretName}`);
 
-           this.cache[secretName] = JSON.parse(response.SecretString) as T;
-
+            this.cache[secretName] = JSON.parse(response.SecretString) as T;
         } catch (error) {
-            const errorMessage = `Error fetching secret '${secretName}': ${error}`
-            console.log(errorMessage)
-            throw new Error(errorMessage)
+            const errorMessage = `Error fetching secret '${secretName}': ${error}`;
+            console.log(errorMessage);
+            throw new Error(errorMessage);
         }
-        return  this.cache[secretName] as T;
-
+        return this.cache[secretName] as T;
     }
 }
