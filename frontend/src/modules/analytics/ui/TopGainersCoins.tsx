@@ -33,6 +33,7 @@ export const TopGainersCoins = () => {
     {
       header: 'Token',
       key: 'name',
+      width: 'w-[45%]',
       render: (_, row, index) => (
         <div className="flex items-center gap-2">
           <h2>{index + 1}</h2>
@@ -47,7 +48,7 @@ export const TopGainersCoins = () => {
     {
       header: 'Precio',
       key: 'price',
-      render: (_, row) => <span className="whitespace-nowrap">{'$ ' + row.price.toFixed(3)}</span>,
+      render: (_, row) => <span className="whitespace-nowrap">{'$ ' + row.price.toFixed(2)}</span>,
     },
     {
       header: '24H',
@@ -58,7 +59,7 @@ export const TopGainersCoins = () => {
         return (
           <div className="flex gap-0.5">
             <span className={`whitespace-nowrap ${isPositive ? 'text-cyan-300' : 'text-red-500'}`}>
-              {isPositive ? `+ ${percentage.toFixed(3)} %` : `- ${Math.abs(percentage).toFixed(3)} % `}
+              {isPositive ? `+ ${percentage.toFixed(2)} %` : `- ${Math.abs(percentage).toFixed(2)} % `}
             </span>
           </div>
         );

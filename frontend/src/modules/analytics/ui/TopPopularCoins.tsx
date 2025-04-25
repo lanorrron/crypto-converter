@@ -33,6 +33,7 @@ export const TopPupularCoins = () => {
     {
       header: 'Token',
       key: 'name',
+      width: 'w-[45%]',
       render: (_, row, index) => (
         <div className="flex items-center gap-2">
           <h2>{index + 1}</h2>
@@ -47,7 +48,7 @@ export const TopPupularCoins = () => {
     {
       header: 'Precio',
       key: 'current_price',
-      render: (_, row) => <span>{row.current_price.toFixed(3)}</span>,
+      render: (_, row) => <span>{row.current_price.toFixed(2)}</span>,
     },
     {
       header: '24H',
@@ -58,8 +59,8 @@ export const TopPupularCoins = () => {
           <div className="flex gap-0.5">
             <span className={`whitespace-nowrap ${isPositive ? 'text-cyan-300' : 'text-red-500'}`}>
               {isPositive
-                ? `+ ${row.price_change_percentage_24h.toFixed(3)} %`
-                : `- ${Math.abs(row.price_change_percentage_24h).toFixed(3)} % `}
+                ? `+ ${row.price_change_percentage_24h.toFixed(2)} %`
+                : `- ${Math.abs(row.price_change_percentage_24h).toFixed(2)} % `}
             </span>
           </div>
         );
