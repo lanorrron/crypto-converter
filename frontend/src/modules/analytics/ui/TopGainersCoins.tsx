@@ -37,7 +37,7 @@ export const TopGainersCoins = () => {
       render: (_, row, index) => (
         <div className="flex items-center gap-2">
           <h2>{index + 1}</h2>
-          <img src={row.logo} alt={`image ${row.name}`} className="w-8 h-8 rounded-full" />
+          <img src={row.logo} alt={`image ${row.name}`} className="w-7 h-7  rounded-full" />
           <div>
             <div className="font-medium">{row.name}</div>
             <div className="text-xs text-gray-400 uppercase">{row.symbol}</div>

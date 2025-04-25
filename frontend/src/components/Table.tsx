@@ -24,7 +24,7 @@ export function GenericTable<T>({ data, columns }: GenericTableProps<T>) {
       <thead>
         <tr className="text-cyan-300 border-b border-cyan-500/20">
           {columns.map((col, i) => (
-            <th key={i} className="py-2 px-3 font-medium text-left">
+            <th key={i} className="py-2 px-1 font-medium text-left">
               {col.header}
             </th>
           ))}
@@ -34,7 +34,7 @@ export function GenericTable<T>({ data, columns }: GenericTableProps<T>) {
         {data.map((row, ri) => (
           <tr key={ri} className="hover:bg-slate-700/20 transition-colors">
             {columns.map((col, ci) => (
-              <td key={ci} className="py-3 px-3 truncate text-left">
+              <td key={ci} className="py-2 px-1 truncate text-left">
                 {col.render ? col.render(row[col.key], row, ri) : (row[col.key] as React.ReactNode)}
               </td>
             ))}
