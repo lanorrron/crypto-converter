@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Sam Crypto',
-  description: 'Information about crypto',
+  description: 'Crypto converter and top gainers, losers, and trending coins.',
   metadataBase: new URL('https://main.d26wywtdu2y5ih.amplifyapp.com'),
   openGraph: {
     type: 'website',
