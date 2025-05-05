@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Sam Crypto',
   description: 'Crypto converter and top gainers, losers, and trending coins.',
-  metadataBase: new URL('https://main.d26wywtdu2y5ih.amplifyapp.com'),
+  metadataBase: new URL('https://main.d24t33tp1v461d.amplifyapp.com'),
   openGraph: {
     type: 'website',
     url: '',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     description: 'Crypto converter and prices: losers, gainers, and popular coins.',
     images: [
       {
-        url: 'https://main.d26wywtdu2y5ih.amplifyapp.com/og-image.png',
+        url: 'https://main.d24t33tp1v461d.amplifyapp.com/og-image.png',
         width: 1200,
         height: 630,
         alt: 'San crypto page',
@@ -36,10 +36,10 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Sam Crypto',
     description: 'Crypto converter and prices: losers, gainers, and popular coins.',
-    images: 'https://main.d26wywtdu2y5ih.amplifyapp.com/og-image.png',
+    images: 'https://main.d24t33tp1v461d.amplifyapp.com/og-image.png',
   },
   other: {
-    'og:image:secure_url': 'https://main.d26wywtdu2y5ih.amplifyapp.com/og-image.png',
+    'og:image:secure_url': 'https://main.d24t33tp1v461d.amplifyapp.com/og-image.png',
     'og:image:type': 'image/png',
     'og:image:alt': 'Portada de Sam Crypto',
   },
