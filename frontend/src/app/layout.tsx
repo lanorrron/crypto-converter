@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://main.d24t33tp1v461d.amplifyapp.com'),
   openGraph: {
     type: 'website',
-    url: '',
+    url: 'https://main.d24t33tp1v461d.amplifyapp.com',
     title: 'Sam Crypto',
     siteName: 'Sam Crypto',
     description: 'Crypto converter and prices: losers, gainers, and popular coins.',
