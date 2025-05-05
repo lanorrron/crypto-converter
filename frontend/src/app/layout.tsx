@@ -12,23 +12,24 @@ const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
 });
+const domain = process.env.NEXT_PUBLIC_DOMAIN;
 
 export const metadata: Metadata = {
   title: 'Sam Crypto',
   description: 'Crypto converter and top gainers, losers, and trending coins.',
-  metadataBase: new URL('https://main.d24t33tp1v461d.amplifyapp.com'),
+  metadataBase: new URL(`${domain}`),
   openGraph: {
     type: 'website',
-    url: 'https://main.d24t33tp1v461d.amplifyapp.com',
+    url: domain,
     title: 'Sam Crypto',
     siteName: 'Sam Crypto',
     description: 'Crypto converter and prices: losers, gainers, and popular coins.',
     images: [
       {
-        url: 'https://main.d24t33tp1v461d.amplifyapp.com/og-image.png',
+        url: `${domain}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: 'San crypto page',
+        alt: 'Sam crypto page',
       },
     ],
   },
@@ -36,12 +37,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Sam Crypto',
     description: 'Crypto converter and prices: losers, gainers, and popular coins.',
-    images: 'https://main.d24t33tp1v461d.amplifyapp.com/og-image.png',
-  },
-  other: {
-    'og:image:secure_url': 'https://main.d24t33tp1v461d.amplifyapp.com/og-image.png',
-    'og:image:type': 'image/png',
-    'og:image:alt': 'Portada de Sam Crypto',
+    images: `${domain}/og-image.png`,
   },
 };
 
