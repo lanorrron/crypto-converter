@@ -4,7 +4,7 @@ This is a monorepo project that includes both the backend and frontend of an app
 
 
 You can see the application running at:
-[https://main.d26wywtdu2y5ih.amplifyapp.com/](https://main.d26wywtdu2y5ih.amplifyapp.com/)
+[https://app.getsamcrypto.com/](https://app.getsamcrypto.com/)
 
 ## 🛠️ Monorepo Structure
 
